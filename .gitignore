@@ -1,3 +1,4 @@
-bookmarks/
+bookmarks/*
+!bookmarks/.gitkeep
 .DS_Store
 secret.php
