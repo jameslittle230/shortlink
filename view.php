@@ -1,3 +1,40 @@
+<?php
+require_once("secret.php");
+
+if($_POST['password'] && $_POST['delete']) {
+	$password = hash("sha256", $_POST['password']);
+
+	$flag = false;
+	foreach($passwords as $k => $v) {
+		if($v == '*' && hash("sha256", $k) == $password) {
+			$flag = true;
+		}
+	}
+
+	if($flag) {
+		$filename = __dir__ . "/bookmarks/" . $namespace . ".txt";
+		$file = fopen($filename, 'r');
+		$contents = file_get_contents($filename);
+
+		while(!feof($file)) {
+			$line = fgets($file);
+			if($line == "") continue;
+			$data = explode("\t", $line);
+			if(in_array($data[0], $_POST['delete'])) {
+				$contents = str_replace($line, '', $contents);
+			}
+		}
+
+		fclose($file);
+		file_put_contents($filename, $contents);
+	} else {
+		$msg = "Password invalid: could not delete shortlinks.";
+	}
+} else if ($_POST) {
+	$msg = "Please select shortlinks to delete, enter the master password, and click the button.";
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,6 +76,33 @@ body {
 li {
     margin-bottom: 1em;
 }
+
+.c-input-field--fill {
+	width: 100%;
+}
+
+.boilerform .c-input-field {
+	font-family: monospace;
+}
+
+.c-form__row {
+	margin-bottom: 1rem;
+	clear: both;
+}
+
+.c-form__row:after {
+	display: table;
+	content: "";
+	clear: both;
+}
+
+.message {
+	font-weight: bold;
+	padding: 12px;
+	background: #ccc;
+	word-break: break-all;
+}
+
 </style>
 
 <title>View all shortlinks</title>
@@ -49,6 +113,11 @@ li {
 <h2 class="subtitle">or <a href="/">go back</a></h2>
 <h1>View all shortlinks</h1>
 
+<?php if($msg): ?>
+<p class="message"><?php echo $msg; ?></p>
+<?php endif; ?>
+
+<form action="" method="POST" class="boilerform">
 <ul>
 <?php
 
@@ -63,11 +132,24 @@ while(!feof($file)) {
 	}
 
 	$data = explode("\t", $line);
-    $urlstring = "jil.im/" . ($namespace != "default" ? ($namespace . '/') : "") . $data[0];
-    echo "<li><code><a href='" . $data[1] . "'>" . $urlstring . "</a> <a href=\"/view?delete=$data[0]\" style=\"color: red !important;\">x</a><br>" . $data[1] . "</code></li>";
+	$urlstring = "jil.im/" . ($namespace != "default" ? ($namespace . '/') : "") . $data[0];
+	printf('<li><code><a href="%s">%s</a>', $data[1], $urlstring);
+	printf('<input type="checkbox" name="delete[]" value="%s" />', $data[0]);
+	printf('<br>%s</code></li>', $data[1]);
 }
 
 ?>
 </ul>
+
+<div class="c-form__row">
+<label for="password" class="c-label">Password</label>
+<input type="password" name="password" id="password" class="c-input-field">
+</div>
+
+<div class="c-form__row">
+<button type="submit" class="c-button">Delete Selected Shortlinks</button>
+</div>
+
+</form>
 </div>
 </body></html>
