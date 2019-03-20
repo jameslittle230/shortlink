@@ -52,21 +52,19 @@ function createShortlink($url, $short, $namespace) {
 
 	while(!feof($file)) {
 		$line = fgets($file);
-		if($line == "") {
-			continue;
-		}
-
+		if($line == "") continue;
 		$data = explode("\t", $line);
         if($short == $data[0]) {
-			$contents = str_replace($line . PHP_EOL, '', $contents);
+			$contents = str_replace($line, '', $contents);
 		}
 	}
 
-    fclose($file);
+	fclose($file);
+	file_put_contents($filename, $contents);
 
     // Add new shortlink
 	$file = fopen($filename, 'a');
-	fwrite($file, PHP_EOL . $short . "\t" . $url);
+	fwrite($file, $short . "\t" . $url);
 	fclose($file);
 
 	$urlstring = "http://jil.im/" . ($namespace != "default" ? $namespace . '/' : "") . $short;
