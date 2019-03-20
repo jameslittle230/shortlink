@@ -11,7 +11,7 @@ function checkData($passwords) {
 
 		$short = preg_replace("/[^a-zA-Z0-9]+/", "", $_POST['short']);
 		if($short == "") {
-			return "Please enter a valid shortcode.";
+			return "Please enter a valid shortlink.";
 		}
 
 		$namespace = preg_replace("/[^a-zA-Z0-9]+/", "", $_POST['namespace']);
@@ -29,7 +29,7 @@ function checkData($passwords) {
 			}
 		}
 
-		return "Password invalid: could not create shortcode.";
+		return "Password invalid: could not create shortlink.";
 	} else {
 		return "";
 	}
@@ -37,7 +37,7 @@ function checkData($passwords) {
 
 function createShortlink($url, $short, $namespace) {
 	if($namespace == "default") {
-		return "Cannot create shortcode: 'default' is a reserved word.";
+		return "Cannot create shortlink: 'default' is a reserved word.";
 	}
 
 	if($namespace == "") {
@@ -46,7 +46,7 @@ function createShortlink($url, $short, $namespace) {
 
 	$filename = __dir__ . "/bookmarks/" . $namespace . ".txt";
 
-    // Delete existing shortcode if we're replacing
+    // Delete existing shortlink if we're replacing
 	$file = fopen($filename, 'r');
 	$contents = file_get_contents($filename);
 
@@ -64,7 +64,7 @@ function createShortlink($url, $short, $namespace) {
 
     fclose($file);
 
-    // Add new shortcode
+    // Add new shortlink
 	$file = fopen($filename, 'a');
 	fwrite($file, PHP_EOL . $short . "\t" . $url);
 	fclose($file);
@@ -169,7 +169,7 @@ body {
 
 <div class="c-form__row">
 	<div class="c-form__col">
-	<label for="short" class="c-label">Shortcode</label>
+	<label for="short" class="c-label">Shortlink</label>
 	<input type="text" name="short" id="short" class="c-input-field">
 	</div>
 
