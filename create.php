@@ -130,6 +130,7 @@ body {
 	font-weight: bold;
 	padding: 12px;
 	background: #ccc;
+	word-break: break-all;
 }
 
 .subtitle {
@@ -194,7 +195,7 @@ body {
 </div>
 
 <div class="c-form__row">
-<label for="short" class="c-label">Password</label>
+<label for="password" class="c-label">Password</label>
 <input type="password" name="password" id="password" class="c-input-field">
 </div>
 
