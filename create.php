@@ -46,10 +46,7 @@ function createShortlink($url, $short, $namespace) {
 
 	$filename = __dir__ . "/bookmarks/" . $namespace . ".txt";
 
-	if(!file_exists($file)) {
-		$file = fopen($filename, 'w');
-		fclose($file);
-	}
+    // Delete existing shortcode if we're replacing
 	$file = fopen($filename, 'r');
 	$contents = file_get_contents($filename);
 
@@ -60,19 +57,20 @@ function createShortlink($url, $short, $namespace) {
 		}
 
 		$data = explode("\t", $line);
-		if($short == $data[0]) {
-			$contents = str_replace(PHP_EOL . $line, '', $contents);
-			file_put_contents($filename, $contents);
+        if($short == $data[0]) {
+			$contents = str_replace($line . PHP_EOL, '', $contents);
 		}
 	}
 
-	fclose($file);
+    fclose($file);
+
+    // Add new shortcode
 	$file = fopen($filename, 'a');
 	fwrite($file, PHP_EOL . $short . "\t" . $url);
 	fclose($file);
 
 	$urlstring = "http://jil.im/" . ($namespace != "default" ? $namespace . '/' : "") . $short;
-	return "New shortlink created: <a href='$urlstring'>$urlstring</a> goes to $url";
+    return "New shortlink created: <a href='$urlstring'>$urlstring</a> goes to:<br><code>$url</code>";
 }
 
 $msg = checkData($passwords);
@@ -206,6 +204,7 @@ body {
 <button type="submit" class="c-button">Submit</button>
 </div>
 </form>
+<h2 class="subtitle">or <a href="/view">see others</a></h2>
 
 </div>
 

@@ -12,6 +12,14 @@ if(count($uri) == 2 && $uri[1] == "") {
 	exit;
 }
 
+/**
+ * If we access http://jil.im/view then go to the view interface
+ */
+if(count($uri) == 2 && $uri[1] == "view") {
+	include "view.php";
+	exit;
+}
+
 /*
  * If there are more than 4 URI components (http://jil.im/a/b/c/something) then
  * go to the error page -- this is an invalid path
@@ -45,6 +53,7 @@ $file = fopen($filename, "r");
  * If file doesn't exist, go to error page
  */
 if(!$file) {
+	echo "Error: File doesn't exist.";
 	include "error.php";
 	exit;
 }
@@ -54,20 +63,20 @@ if(!$file) {
  */
 while(!feof($file)) {
 	$line = fgets($file);
-	if($line == "") {
+	if(trim($line) == "") {
 		continue;
 	}
 
 	$data = explode("\t", $line);
 	if($path == $data[0]) {
-		/* Data record with path has been found */
-		// $urlstring = "http://jil.im/" . ($namespace != "default" ? $namespace . '/' : "") . $path;
-		shell_exec('curl -X POST --data-urlencode "payload={\"channel\": \"#debug\", \"username\": \"jil.im\", \"text\": \"thing visited!\", \"icon_emoji\": \":link:\"}" https://hooks.slack.com/services/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');
 		header("Location: " . $data[1], true, 301);
 		exit();
 	}
 }
 
+/*
+ * If we get here, there was a problem that should be surfaced to the user.
+ */
 include "error.php";
 
 exit;
