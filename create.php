@@ -64,7 +64,7 @@ function createShortlink($url, $short, $namespace) {
 
     // Add new shortlink
 	$file = fopen($filename, 'a');
-	fwrite($file, $short . "\t" . $url);
+	fwrite($file, "\n" . $short . "\t" . $url);
 	fclose($file);
 
 	$urlstring = "http://jil.im/" . ($namespace != "default" ? $namespace . '/' : "") . $short;
